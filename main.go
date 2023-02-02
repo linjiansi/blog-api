@@ -16,7 +16,12 @@ func main() {
 	r.Get("/hello", handlers.HelloHandler)
 	r.Post("/article", handlers.PostArticleHandler)
 	r.Get("/article/list", handlers.GetArticleListHandler)
-	r.Get("/article/1", handlers.GetArticleDetailHandler)
+	r.Route("/article", func(r chi.Router) {
+		r.Route("/{articleID:[0-9]+}", func(r chi.Router) {
+			r.Get("/", handlers.GetArticleDetailHandler)
+		})
+	})
+
 	r.Post("/article/favorite", handlers.PostFavoriteArticleHandler)
 	r.Post("/comment", handlers.PostCommentHandler)
 

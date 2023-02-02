@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+	"github.com/go-chi/chi/v5"
 	"io"
 	"net/http"
 )
@@ -18,7 +20,9 @@ func GetArticleListHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func GetArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, "Article No.1 \n")
+	articleID := chi.URLParam(req, "articleID")
+	resString := fmt.Sprintf("Article No.%s\n", articleID)
+	io.WriteString(w, resString)
 }
 
 func PostFavoriteArticleHandler(w http.ResponseWriter, req *http.Request) {
