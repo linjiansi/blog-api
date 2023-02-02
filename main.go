@@ -14,15 +14,18 @@ func main() {
 	r.Use(middleware.Logger)
 
 	r.Get("/hello", handlers.HelloHandler)
-	r.Post("/article", handlers.PostArticleHandler)
-	r.Get("/article/list", handlers.GetArticleListHandler)
+
 	r.Route("/article", func(r chi.Router) {
+		r.Post("/", handlers.PostArticleHandler)
+		r.Post("/favorite", handlers.PostFavoriteArticleHandler)
+
+		r.Get("/list", handlers.GetArticleListHandler)
+
 		r.Route("/{articleID:[0-9]+}", func(r chi.Router) {
 			r.Get("/", handlers.GetArticleDetailHandler)
 		})
 	})
 
-	r.Post("/article/favorite", handlers.PostFavoriteArticleHandler)
 	r.Post("/comment", handlers.PostCommentHandler)
 
 	log.Println("server start at port 8080")
