@@ -1,11 +1,10 @@
 package handlers
 
 import (
-	"fmt"
-	"github.com/go-chi/chi/v5"
+	"encoding/json"
+	"github.com/linjiansi/blog-api/models"
 	"io"
 	"net/http"
-	"strconv"
 )
 
 func HelloHandler(w http.ResponseWriter, req *http.Request) {
@@ -13,39 +12,68 @@ func HelloHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func PostArticleHandler(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, "Posting Article... \n")
+	article := models.Article1
+	jsonData, err := json.Marshal(article)
+	if err != nil {
+		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
+		return
+	}
+	w.Write(jsonData)
 }
 
 func GetArticleListHandler(w http.ResponseWriter, req *http.Request) {
-	queryMap := req.URL.Query()
+	//queryMap := req.URL.Query()
+	//
+	//var page int
+	//
+	//if p, ok := queryMap["page"]; ok && len(p) > 0 {
+	//	var err error
+	//	page, err = strconv.Atoi(p[0])
+	//	if err != nil {
+	//		http.Error(w, "Invalid query parameter", http.StatusBadRequest)
+	//		return
+	//	}
+	//} else {
+	//	page = 1
+	//}
 
-	var page int
-
-	if p, ok := queryMap["page"]; ok && len(p) > 0 {
-		var err error
-		page, err = strconv.Atoi(p[0])
-		if err != nil {
-			http.Error(w, "Invalid query parameter", http.StatusBadRequest)
-			return
-		}
-	} else {
-		page = 1
+	article1 := models.Article1
+	article2 := models.Article2
+	jsonData, err := json.Marshal([]models.Article{article1, article2})
+	if err != nil {
+		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
+		return
 	}
-
-	resString := fmt.Sprintf("Article List (page %d)\n", page)
-	io.WriteString(w, resString)
+	w.Write(jsonData)
 }
 
 func GetArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
-	articleID := chi.URLParam(req, "articleID")
-	resString := fmt.Sprintf("Article No.%s\n", articleID)
-	io.WriteString(w, resString)
+	//articleID := chi.URLParam(req, "articleID")
+	article := models.Article1
+	jsonData, err := json.Marshal(article)
+	if err != nil {
+		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
+		return
+	}
+	w.Write(jsonData)
 }
 
 func PostFavoriteArticleHandler(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, "Posting Nice... \n")
+	article := models.Article1
+	jsonData, err := json.Marshal(article)
+	if err != nil {
+		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
+		return
+	}
+	w.Write(jsonData)
 }
 
 func PostCommentHandler(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, "Posting Comment... \n")
+	comment := models.Comment1
+	jsonData, err := json.Marshal(comment)
+	if err != nil {
+		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
+		return
+	}
+	w.Write(jsonData)
 }
