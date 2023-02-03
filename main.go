@@ -13,8 +13,6 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
-	r.Get("/hello", handlers.HelloHandler)
-
 	r.Route("/article", func(r chi.Router) {
 		r.Post("/", handlers.PostArticleHandler)
 		r.Post("/favorite", handlers.PostFavoriteArticleHandler)

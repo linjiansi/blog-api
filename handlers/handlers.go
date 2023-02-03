@@ -3,13 +3,8 @@ package handlers
 import (
 	"encoding/json"
 	"github.com/linjiansi/blog-api/models"
-	"io"
 	"net/http"
 )
-
-func HelloHandler(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, "Hello, world! \n")
-}
 
 func PostArticleHandler(w http.ResponseWriter, req *http.Request) {
 	article := models.Article1
