@@ -7,13 +7,15 @@ import (
 )
 
 func PostArticleHandler(w http.ResponseWriter, req *http.Request) {
-	article := models.Article1
-	jsonData, err := json.Marshal(article)
-	if err != nil {
-		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
+
+	var reqArticle models.Article
+
+	if err := json.NewDecoder(req.Body).Decode(&reqArticle); err != nil {
+		http.Error(w, "fail to get request body\n", http.StatusInternalServerError)
 		return
 	}
-	w.Write(jsonData)
+
+	json.NewEncoder(w).Encode(reqArticle)
 }
 
 func GetArticleListHandler(w http.ResponseWriter, req *http.Request) {
@@ -34,41 +36,33 @@ func GetArticleListHandler(w http.ResponseWriter, req *http.Request) {
 
 	article1 := models.Article1
 	article2 := models.Article2
-	jsonData, err := json.Marshal([]models.Article{article1, article2})
-	if err != nil {
-		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
-		return
-	}
-	w.Write(jsonData)
+	json.NewEncoder(w).Encode([]models.Article{article1, article2})
 }
 
 func GetArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
 	//articleID := chi.URLParam(req, "articleID")
 	article := models.Article1
-	jsonData, err := json.Marshal(article)
-	if err != nil {
-		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
-		return
-	}
-	w.Write(jsonData)
+	json.NewEncoder(w).Encode(article)
 }
 
 func PostFavoriteArticleHandler(w http.ResponseWriter, req *http.Request) {
-	article := models.Article1
-	jsonData, err := json.Marshal(article)
-	if err != nil {
-		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
+	var reqArticle models.Article
+
+	if err := json.NewDecoder(req.Body).Decode(&reqArticle); err != nil {
+		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
 		return
 	}
-	w.Write(jsonData)
+
+	json.NewEncoder(w).Encode(reqArticle)
 }
 
 func PostCommentHandler(w http.ResponseWriter, req *http.Request) {
-	comment := models.Comment1
-	jsonData, err := json.Marshal(comment)
-	if err != nil {
-		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
+	var reqComment models.Comment
+
+	if err := json.NewDecoder(req.Body).Decode(&reqComment); err != nil {
+		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
 		return
 	}
-	w.Write(jsonData)
+
+	json.NewEncoder(w).Encode(reqComment)
 }
