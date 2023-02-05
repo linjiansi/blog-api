@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/linjiansi/blog-api/api/middlewares"
 	"github.com/linjiansi/blog-api/controllers"
 	"github.com/linjiansi/blog-api/services"
 )
@@ -15,7 +16,12 @@ func NewRouter(db *sql.DB) *chi.Mux {
 	cCon := controllers.NewCommentController(s)
 
 	r := chi.NewRouter()
-	r.Use(middleware.Logger)
+	r.Use(
+		middlewares.LoggingMiddleware,
+		middleware.RequestID,
+		middleware.RealIP,
+		middleware.Recoverer,
+	)
 
 	r.Route("/article", func(r chi.Router) {
 		r.Post("/", aCon.PostArticleHandler)
