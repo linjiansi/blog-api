@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"github.com/linjiansi/blog-api/apperrors"
 	"github.com/linjiansi/blog-api/controllers/services"
 	"github.com/linjiansi/blog-api/models"
 	"net/http"
@@ -19,6 +20,7 @@ func (c *CommentController) PostCommentHandler(w http.ResponseWriter, req *http.
 	var reqComment models.Comment
 
 	if err := json.NewDecoder(req.Body).Decode(&reqComment); err != nil {
+		err = apperrors.ReqBodyDecodeFailed.Wrap(err, "bad request body")
 		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
 		return
 	}

@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
+	"github.com/linjiansi/blog-api/apperrors"
 	"github.com/linjiansi/blog-api/controllers/services"
 	"github.com/linjiansi/blog-api/models"
 	"net/http"
@@ -22,7 +23,8 @@ func (c *ArticleController) PostArticleHandler(w http.ResponseWriter, req *http.
 	var reqArticle models.Article
 
 	if err := json.NewDecoder(req.Body).Decode(&reqArticle); err != nil {
-		http.Error(w, "fail to get request body\n", http.StatusInternalServerError)
+		err = apperrors.ReqBodyDecodeFailed.Wrap(err, "bad request body")
+		http.Error(w, "fail to decode json\n", http.StatusInternalServerError)
 		return
 	}
 
@@ -44,6 +46,7 @@ func (c *ArticleController) GetArticleListHandler(w http.ResponseWriter, req *ht
 		var err error
 		page, err = strconv.Atoi(p[0])
 		if err != nil {
+			err = apperrors.BadParam.Wrap(err, "query param must be number")
 			http.Error(w, "Invalid query parameter", http.StatusBadRequest)
 			return
 		}
@@ -64,6 +67,7 @@ func (c *ArticleController) GetArticleDetailHandler(w http.ResponseWriter, req *
 	articleIDStr := chi.URLParam(req, "articleID")
 	articleID, err := strconv.Atoi(articleIDStr)
 	if err != nil {
+		err = apperrors.BadParam.Wrap(err, "path param must be number")
 		http.Error(w, "fail to get request body\n", http.StatusInternalServerError)
 		return
 	}
@@ -80,6 +84,7 @@ func (c *ArticleController) PostFavoriteArticleHandler(w http.ResponseWriter, re
 	var reqArticle models.Article
 
 	if err := json.NewDecoder(req.Body).Decode(&reqArticle); err != nil {
+		err = apperrors.ReqBodyDecodeFailed.Wrap(err, "bad request body")
 		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
 		return
 	}
