@@ -9,15 +9,15 @@ import (
 	"strconv"
 )
 
-type BlogController struct {
-	service services.BlogServicer
+type ArticleController struct {
+	service services.ArticleServicer
 }
 
-func NewBlogController(s services.BlogServicer) *BlogController {
-	return &BlogController{service: s}
+func NewArticleController(s services.ArticleServicer) *ArticleController {
+	return &ArticleController{service: s}
 }
 
-func (c *BlogController) PostArticleHandler(w http.ResponseWriter, req *http.Request) {
+func (c *ArticleController) PostArticleHandler(w http.ResponseWriter, req *http.Request) {
 
 	var reqArticle models.Article
 
@@ -35,7 +35,7 @@ func (c *BlogController) PostArticleHandler(w http.ResponseWriter, req *http.Req
 	json.NewEncoder(w).Encode(article)
 }
 
-func (c *BlogController) GetArticleListHandler(w http.ResponseWriter, req *http.Request) {
+func (c *ArticleController) GetArticleListHandler(w http.ResponseWriter, req *http.Request) {
 	queryMap := req.URL.Query()
 
 	var page int
@@ -60,7 +60,7 @@ func (c *BlogController) GetArticleListHandler(w http.ResponseWriter, req *http.
 	json.NewEncoder(w).Encode(articleList)
 }
 
-func (c *BlogController) GetArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
+func (c *ArticleController) GetArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
 	articleIDStr := chi.URLParam(req, "articleID")
 	articleID, err := strconv.Atoi(articleIDStr)
 	if err != nil {
@@ -76,7 +76,7 @@ func (c *BlogController) GetArticleDetailHandler(w http.ResponseWriter, req *htt
 	json.NewEncoder(w).Encode(article)
 }
 
-func (c *BlogController) PostFavoriteArticleHandler(w http.ResponseWriter, req *http.Request) {
+func (c *ArticleController) PostFavoriteArticleHandler(w http.ResponseWriter, req *http.Request) {
 	var reqArticle models.Article
 
 	if err := json.NewDecoder(req.Body).Decode(&reqArticle); err != nil {
@@ -91,21 +91,4 @@ func (c *BlogController) PostFavoriteArticleHandler(w http.ResponseWriter, req *
 	}
 
 	json.NewEncoder(w).Encode(article)
-}
-
-func (c *BlogController) PostCommentHandler(w http.ResponseWriter, req *http.Request) {
-	var reqComment models.Comment
-
-	if err := json.NewDecoder(req.Body).Decode(&reqComment); err != nil {
-		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
-		return
-	}
-
-	comment, err := c.service.PostCommentService(reqComment)
-	if err != nil {
-		http.Error(w, "fail to get request body\n", http.StatusInternalServerError)
-		return
-	}
-
-	json.NewEncoder(w).Encode(comment)
 }

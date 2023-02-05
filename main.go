@@ -35,8 +35,9 @@ func main() {
 	}
 
 	s := services.NewBlogService(db)
-	con := controllers.NewBlogController(s)
-	r := router.NewRouter(con)
+	aCon := controllers.NewArticleController(s)
+	cCon := controllers.NewCommentController(s)
+	r := router.NewRouter(aCon, cCon)
 
 	log.Println("server start at port 8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
