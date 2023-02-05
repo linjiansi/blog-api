@@ -24,13 +24,13 @@ func (c *ArticleController) PostArticleHandler(w http.ResponseWriter, req *http.
 
 	if err := json.NewDecoder(req.Body).Decode(&reqArticle); err != nil {
 		err = apperrors.ReqBodyDecodeFailed.Wrap(err, "bad request body")
-		http.Error(w, "fail to decode json\n", http.StatusInternalServerError)
+		apperrors.ErrorHandler(w, req, err)
 		return
 	}
 
 	article, err := c.service.PostArticleService(reqArticle)
 	if err != nil {
-		http.Error(w, "fail to get request body\n", http.StatusInternalServerError)
+		apperrors.ErrorHandler(w, req, err)
 		return
 	}
 
@@ -47,7 +47,7 @@ func (c *ArticleController) GetArticleListHandler(w http.ResponseWriter, req *ht
 		page, err = strconv.Atoi(p[0])
 		if err != nil {
 			err = apperrors.BadParam.Wrap(err, "query param must be number")
-			http.Error(w, "Invalid query parameter", http.StatusBadRequest)
+			apperrors.ErrorHandler(w, req, err)
 			return
 		}
 	} else {
@@ -56,7 +56,7 @@ func (c *ArticleController) GetArticleListHandler(w http.ResponseWriter, req *ht
 
 	articleList, err := c.service.GetArticleListService(page)
 	if err != nil {
-		http.Error(w, "fail to get request body\n", http.StatusInternalServerError)
+		apperrors.ErrorHandler(w, req, err)
 		return
 	}
 
@@ -68,13 +68,13 @@ func (c *ArticleController) GetArticleDetailHandler(w http.ResponseWriter, req *
 	articleID, err := strconv.Atoi(articleIDStr)
 	if err != nil {
 		err = apperrors.BadParam.Wrap(err, "path param must be number")
-		http.Error(w, "fail to get request body\n", http.StatusInternalServerError)
+		apperrors.ErrorHandler(w, req, err)
 		return
 	}
 
 	article, err := c.service.GetArticleService(articleID)
 	if err != nil {
-		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
+		apperrors.ErrorHandler(w, req, err)
 		return
 	}
 	json.NewEncoder(w).Encode(article)
@@ -85,13 +85,13 @@ func (c *ArticleController) PostFavoriteArticleHandler(w http.ResponseWriter, re
 
 	if err := json.NewDecoder(req.Body).Decode(&reqArticle); err != nil {
 		err = apperrors.ReqBodyDecodeFailed.Wrap(err, "bad request body")
-		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
+		apperrors.ErrorHandler(w, req, err)
 		return
 	}
 
 	article, err := c.service.PostFavoriteService(reqArticle)
 	if err != nil {
-		http.Error(w, "fail to get request body\n", http.StatusInternalServerError)
+		apperrors.ErrorHandler(w, req, err)
 		return
 	}
 
