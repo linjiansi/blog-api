@@ -3,8 +3,6 @@ package repositories
 import (
 	"database/sql"
 	"github.com/linjiansi/blog-api/models"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 func InsertComment(db *sql.DB, comment models.Comment) (models.Comment, error) {
