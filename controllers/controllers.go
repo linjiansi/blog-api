@@ -3,17 +3,17 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
+	"github.com/linjiansi/blog-api/controllers/services"
 	"github.com/linjiansi/blog-api/models"
-	"github.com/linjiansi/blog-api/services"
 	"net/http"
 	"strconv"
 )
 
 type BlogController struct {
-	service *services.BlogService
+	service services.BlogServicer
 }
 
-func NewBlogController(s *services.BlogService) *BlogController {
+func NewBlogController(s services.BlogServicer) *BlogController {
 	return &BlogController{service: s}
 }
 
