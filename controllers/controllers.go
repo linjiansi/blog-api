@@ -1,4 +1,4 @@
-package handlers
+package controllers
 
 import (
 	"encoding/json"
@@ -9,7 +9,15 @@ import (
 	"strconv"
 )
 
-func PostArticleHandler(w http.ResponseWriter, req *http.Request) {
+type BlogController struct {
+	service *services.BlogService
+}
+
+func NewBlogController(s *services.BlogService) *BlogController {
+	return &BlogController{service: s}
+}
+
+func (c *BlogController) PostArticleHandler(w http.ResponseWriter, req *http.Request) {
 
 	var reqArticle models.Article
 
@@ -18,7 +26,7 @@ func PostArticleHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	article, err := services.PostArticleService(reqArticle)
+	article, err := c.service.PostArticleService(reqArticle)
 	if err != nil {
 		http.Error(w, "fail to get request body\n", http.StatusInternalServerError)
 		return
@@ -27,7 +35,7 @@ func PostArticleHandler(w http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(w).Encode(article)
 }
 
-func GetArticleListHandler(w http.ResponseWriter, req *http.Request) {
+func (c *BlogController) GetArticleListHandler(w http.ResponseWriter, req *http.Request) {
 	queryMap := req.URL.Query()
 
 	var page int
@@ -43,7 +51,7 @@ func GetArticleListHandler(w http.ResponseWriter, req *http.Request) {
 		page = 1
 	}
 
-	articleList, err := services.GetArticleListService(page)
+	articleList, err := c.service.GetArticleListService(page)
 	if err != nil {
 		http.Error(w, "fail to get request body\n", http.StatusInternalServerError)
 		return
@@ -52,7 +60,7 @@ func GetArticleListHandler(w http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(w).Encode(articleList)
 }
 
-func GetArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
+func (c *BlogController) GetArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
 	articleIDStr := chi.URLParam(req, "articleID")
 	articleID, err := strconv.Atoi(articleIDStr)
 	if err != nil {
@@ -60,7 +68,7 @@ func GetArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	article, err := services.GetArticleService(articleID)
+	article, err := c.service.GetArticleService(articleID)
 	if err != nil {
 		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
 		return
@@ -68,7 +76,7 @@ func GetArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(w).Encode(article)
 }
 
-func PostFavoriteArticleHandler(w http.ResponseWriter, req *http.Request) {
+func (c *BlogController) PostFavoriteArticleHandler(w http.ResponseWriter, req *http.Request) {
 	var reqArticle models.Article
 
 	if err := json.NewDecoder(req.Body).Decode(&reqArticle); err != nil {
@@ -76,7 +84,7 @@ func PostFavoriteArticleHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	article, err := services.PostFavoriteService(reqArticle)
+	article, err := c.service.PostFavoriteService(reqArticle)
 	if err != nil {
 		http.Error(w, "fail to get request body\n", http.StatusInternalServerError)
 		return
@@ -85,7 +93,7 @@ func PostFavoriteArticleHandler(w http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(w).Encode(article)
 }
 
-func PostCommentHandler(w http.ResponseWriter, req *http.Request) {
+func (c *BlogController) PostCommentHandler(w http.ResponseWriter, req *http.Request) {
 	var reqComment models.Comment
 
 	if err := json.NewDecoder(req.Body).Decode(&reqComment); err != nil {
@@ -93,7 +101,7 @@ func PostCommentHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	comment, err := services.PostCommentService(reqComment)
+	comment, err := c.service.PostCommentService(reqComment)
 	if err != nil {
 		http.Error(w, "fail to get request body\n", http.StatusInternalServerError)
 		return

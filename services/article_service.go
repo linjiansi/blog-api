@@ -5,19 +5,14 @@ import (
 	"github.com/linjiansi/blog-api/repositories"
 )
 
-func GetArticleService(articleID int) (models.Article, error) {
-	db, err := connectDB()
-	if err != nil {
-		return models.Article{}, err
-	}
-	defer db.Close()
+func (s *BlogService) GetArticleService(articleID int) (models.Article, error) {
 
-	returnedArticle, err := repositories.SelectArticleDetail(db, articleID)
+	returnedArticle, err := repositories.SelectArticleDetail(s.db, articleID)
 	if err != nil {
 		return models.Article{}, err
 	}
 
-	returnedCommentList, err := repositories.SelectCommentList(db, articleID)
+	returnedCommentList, err := repositories.SelectCommentList(s.db, articleID)
 	if err != nil {
 		return models.Article{}, err
 	}
@@ -27,14 +22,9 @@ func GetArticleService(articleID int) (models.Article, error) {
 	return returnedArticle, nil
 }
 
-func PostArticleService(article models.Article) (models.Article, error) {
-	db, err := connectDB()
-	if err != nil {
-		return models.Article{}, err
-	}
-	defer db.Close()
+func (s *BlogService) PostArticleService(article models.Article) (models.Article, error) {
 
-	returnedArticle, err := repositories.InsertArticle(db, article)
+	returnedArticle, err := repositories.InsertArticle(s.db, article)
 	if err != nil {
 		return models.Article{}, err
 	}
@@ -42,14 +32,9 @@ func PostArticleService(article models.Article) (models.Article, error) {
 	return returnedArticle, nil
 }
 
-func GetArticleListService(page int) ([]models.Article, error) {
-	db, err := connectDB()
-	if err != nil {
-		return nil, err
-	}
-	defer db.Close()
+func (s *BlogService) GetArticleListService(page int) ([]models.Article, error) {
 
-	returnedArticleList, err := repositories.SelectArticleList(db, page)
+	returnedArticleList, err := repositories.SelectArticleList(s.db, page)
 	if err != nil {
 		return nil, err
 	}
@@ -57,14 +42,9 @@ func GetArticleListService(page int) ([]models.Article, error) {
 	return returnedArticleList, nil
 }
 
-func PostFavoriteService(article models.Article) (models.Article, error) {
-	db, err := connectDB()
-	if err != nil {
-		return models.Article{}, err
-	}
-	defer db.Close()
+func (s *BlogService) PostFavoriteService(article models.Article) (models.Article, error) {
 
-	err = repositories.UpdateFavoriteNum(db, article.ID)
+	err := repositories.UpdateFavoriteNum(s.db, article.ID)
 	if err != nil {
 		return models.Article{}, err
 	}

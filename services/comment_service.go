@@ -5,14 +5,9 @@ import (
 	"github.com/linjiansi/blog-api/repositories"
 )
 
-func PostCommentService(comment models.Comment) (models.Comment, error) {
-	db, err := connectDB()
-	if err != nil {
-		return models.Comment{}, err
-	}
-	db.Close()
+func (s *BlogService) PostCommentService(comment models.Comment) (models.Comment, error) {
 
-	returnedComment, err := repositories.InsertComment(db, comment)
+	returnedComment, err := repositories.InsertComment(s.db, comment)
 	if err != nil {
 		return models.Comment{}, err
 	}
