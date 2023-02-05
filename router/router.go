@@ -1,15 +1,19 @@
 package router
 
 import (
+	"database/sql"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/linjiansi/blog-api/controllers"
+	"github.com/linjiansi/blog-api/services"
 )
 
-func NewRouter(
-	aCon *controllers.ArticleController,
-	cCon *controllers.CommentController,
-) *chi.Mux {
+func NewRouter(db *sql.DB) *chi.Mux {
+
+	s := services.NewBlogService(db)
+	aCon := controllers.NewArticleController(s)
+	cCon := controllers.NewCommentController(s)
+
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 

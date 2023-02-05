@@ -3,9 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"github.com/linjiansi/blog-api/controllers"
 	"github.com/linjiansi/blog-api/router"
-	"github.com/linjiansi/blog-api/services"
 	"log"
 	"net/http"
 	"os"
@@ -34,10 +32,7 @@ func main() {
 		return
 	}
 
-	s := services.NewBlogService(db)
-	aCon := controllers.NewArticleController(s)
-	cCon := controllers.NewCommentController(s)
-	r := router.NewRouter(aCon, cCon)
+	r := router.NewRouter(&db)
 
 	log.Println("server start at port 8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
