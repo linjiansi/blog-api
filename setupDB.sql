@@ -4,7 +4,7 @@ create table if not exists articles (
     contents text not null,
     username varchar(100) not null,
     favorite integer not null,
-    created_at datetime not null,
+    created_at datetime not null
 );
 
 create table if not exists comments (
