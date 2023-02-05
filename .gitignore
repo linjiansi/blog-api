@@ -28,7 +28,6 @@ release.sh
 !.gitkeep
 tmp
 env
-.env
 .DS_Store
 
 ### Go Patch ###
