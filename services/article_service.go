@@ -9,27 +9,62 @@ import (
 )
 
 func (s *BlogService) GetArticleService(articleID int) (models.Article, error) {
+	var article models.Article
+	var commentList []models.Comment
+	var articleGetErr, commentGetErr error
 
-	returnedArticle, err := repositories.SelectArticleDetail(s.db, articleID)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			err = apperrors.NAData.Wrap(err, "no data")
+	type articleResult struct {
+		article models.Article
+		err     error
+	}
+
+	type commentResult struct {
+		commentList *[]models.Comment
+		err         error
+	}
+
+	articleCh := make(chan articleResult)
+	commentCh := make(chan commentResult)
+	defer close(articleCh)
+	defer close(commentCh)
+
+	go func(ch chan<- articleResult, db *sql.DB, articleID int) {
+		article, articleGetErr = repositories.SelectArticleDetail(s.db, articleID)
+		ch <- articleResult{article: article, err: articleGetErr}
+	}(articleCh, s.db, articleID)
+
+	go func(ch chan<- commentResult, db *sql.DB, articleID int) {
+		commentList, commentGetErr = repositories.SelectCommentList(db, articleID)
+		ch <- commentResult{commentList: &commentList, err: commentGetErr}
+	}(commentCh, s.db, articleID)
+
+	for i := 0; i < 2; i++ {
+		select {
+		case ar := <-articleCh:
+			article, articleGetErr = ar.article, ar.err
+		case cr := <-commentCh:
+			commentList, commentGetErr = *cr.commentList, cr.err
+		}
+	}
+
+	if articleGetErr != nil {
+		if errors.Is(articleGetErr, sql.ErrNoRows) {
+			err := apperrors.NAData.Wrap(articleGetErr, "no data")
 			return models.Article{}, err
 		} else {
-			err = apperrors.GetDataFailed.Wrap(err, "fail to get data")
+			err := apperrors.GetDataFailed.Wrap(articleGetErr, "fail to get data")
 			return models.Article{}, err
 		}
 	}
 
-	returnedCommentList, err := repositories.SelectCommentList(s.db, articleID)
-	if err != nil {
-		err = apperrors.GetDataFailed.Wrap(err, "fail to get data")
+	if commentGetErr != nil {
+		err := apperrors.GetDataFailed.Wrap(commentGetErr, "fail to get data")
 		return models.Article{}, err
 	}
 
-	returnedArticle.CommentList = append(returnedArticle.CommentList, returnedCommentList...)
+	article.CommentList = append(article.CommentList, commentList...)
 
-	return returnedArticle, nil
+	return article, nil
 }
 
 func (s *BlogService) PostArticleService(article models.Article) (models.Article, error) {
