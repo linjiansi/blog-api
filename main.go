@@ -3,10 +3,11 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"github.com/linjiansi/blog-api/api"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/linjiansi/blog-api/api"
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/joho/godotenv/autoload"

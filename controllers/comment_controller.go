@@ -2,10 +2,11 @@ package controllers
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/linjiansi/blog-api/apperrors"
 	"github.com/linjiansi/blog-api/controllers/services"
 	"github.com/linjiansi/blog-api/models"
-	"net/http"
 )
 
 type CommentController struct {

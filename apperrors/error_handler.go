@@ -3,9 +3,10 @@ package apperrors
 import (
 	"encoding/json"
 	"errors"
-	"github.com/linjiansi/blog-api/api/middlewares"
 	"log"
 	"net/http"
+
+	"github.com/linjiansi/blog-api/api/middlewares"
 )
 
 func ErrorHandler(w http.ResponseWriter, req *http.Request, err error) {
